@@ -1,12 +1,13 @@
-import logging
 from pathlib import Path
 
 from fastapi import HTTPException
 from starlette.responses import FileResponse
 
 from database import ServerMemory
-from webserver.routes import RiderRoutes, ParkRoutes, StatsRoute, ContestRoutes, ScorecardRoutes
-from webserver.website_base import Website
+from webserver import RiderRoutes, ParkRoutes, StatsRoute, ContestRoutes, ScorecardRoutes
+from webserver import Website
+from webserver.routes.analytics_route import AnalyticsRoutes
+
 
 class KoesterVentures(Website):
     def __init__(self, memory: ServerMemory):
@@ -23,6 +24,7 @@ class KoesterVentures(Website):
         self.stats_route = StatsRoute(memory=self.memory)
         self.contest_route = ContestRoutes(memory=self.memory)
         self.scorecard_route = ScorecardRoutes(memory=self.memory)
+        self.analytics_route = AnalyticsRoutes()
 
         self.setup_specific_routes()
         self.setup_routes()
@@ -34,6 +36,7 @@ class KoesterVentures(Website):
         self.app.include_router(self.scorecard_route.router, prefix="/api/scorecards")
         self.app.include_router(self.parks_route.router, prefix="/api/parks")
         self.app.include_router(self.contest_route.router, prefix="/api/contest")
+        self.app.include_router(self.analytics_route, prefix='/api/analytics')
 
     def setup_routes(self):
 
