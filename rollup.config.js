@@ -58,7 +58,15 @@ export default {
         {
           src: `${BASE_DIR}/src/images/*`,
           dest: `${BASE_DIR}/public/images`
-        }
+        },
+        { 
+           src: `${BASE_DIR}/src/js/*`,
+          dest: `${BASE_DIR}/public/js`
+        },
+        { 
+          src: `${BASE_DIR}/src/css/*`,
+         dest: `${BASE_DIR}/public/css`
+       }
       ],
       verbose: true
     }),

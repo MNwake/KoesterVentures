@@ -8,9 +8,7 @@
 
   function handleSubmit(event) {
     event.preventDefault();
-    // Here you would typically handle the form submission
     console.log('Form submitted:', formData);
-    // Reset form
     formData = {
       name: '',
       email: '',
@@ -31,63 +29,53 @@
       <div class="contact-info">
         <div class="info-item">
           <h3>Email</h3>
-          <p><a href="mailto:contact@koesterventures.com">contact@koesterventures.com</a></p>
+          <p><a href="mailto:contact@koesterventures.com">theo@koesterventures.com</a></p>
         </div>
         <div class="info-item">
           <h3>Location</h3>
-          <p>San Francisco Bay Area, CA</p>
+          <p>Lakeland, FL</p>
         </div>
         <div class="info-item">
           <h3>Follow Us</h3>
           <div class="social-links">
-            <a href="https://github.com/yourusername" target="_blank" rel="noopener">GitHub</a>
-            <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://github.com/MNwake" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://www.linkedin.com/in/theo-koester-335a2a90" target="_blank" rel="noopener">LinkedIn</a>
           </div>
         </div>
       </div>
 
-      <form class="contact-form" on:submit={handleSubmit}>
-        <div class="form-group">
-          <label for="name">Name</label>
+      <form class="contact-form cf" on:submit={handleSubmit}>
+        <div class="form-inputs">
           <input 
             type="text" 
-            id="name" 
-            bind:value={formData.name} 
+            id="input-name" 
+            placeholder="Name"
+            bind:value={formData.name}
             required
           />
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email</label>
           <input 
             type="email" 
-            id="email" 
-            bind:value={formData.email} 
+            id="input-email" 
+            placeholder="Email address"
+            bind:value={formData.email}
             required
           />
-        </div>
-
-        <div class="form-group">
-          <label for="subject">Subject</label>
           <input 
             type="text" 
-            id="subject" 
-            bind:value={formData.subject} 
+            id="input-subject" 
+            placeholder="Subject"
+            bind:value={formData.subject}
             required
           />
-        </div>
-
-        <div class="form-group">
-          <label for="message">Message</label>
           <textarea 
-            id="message" 
-            bind:value={formData.message} 
-            rows="5" 
+            name="message" 
+            id="input-message" 
+            placeholder="Message"
+            bind:value={formData.message}
             required
           ></textarea>
         </div>
-
-        <button type="submit" class="btn primary">Send Message</button>
+        <input type="submit" value="Send Message" id="input-submit">
       </form>
     </div>
   </div>
@@ -95,13 +83,14 @@
 
 <style>
   .contact {
-    background-color: white;
+    background-color: var(--gray-light, #f1f1f1);
+    padding: 4rem 0;
   }
 
   h2 {
     text-align: center;
     font-size: 2.5rem;
-    color: var(--text-color);
+    color: var(--text-color, #333);
     margin-bottom: 1rem;
   }
 
@@ -109,7 +98,7 @@
     text-align: center;
     max-width: 600px;
     margin: 0 auto 3rem auto;
-    color: var(--text-color);
+    color: var(--text-color, #333);
     opacity: 0.8;
   }
 
@@ -117,6 +106,7 @@
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 4rem;
+    align-items: start;
   }
 
   .contact-info {
@@ -128,22 +118,22 @@
   .info-item h3 {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
-    color: var(--text-color);
+    color: var(--text-color, #333);
   }
 
   .info-item p {
-    color: var(--text-color);
+    color: var(--text-color, #333);
     opacity: 0.8;
   }
 
   .info-item a {
-    color: var(--primary-color);
+    color: var(--primary-color, #e74c3c);
     text-decoration: none;
-    transition: color var(--transition-speed);
+    transition: color 0.3s ease;
   }
 
   .info-item a:hover {
-    color: var(--secondary-color);
+    color: var(--secondary-color, #c0392b);
   }
 
   .social-links {
@@ -152,51 +142,48 @@
   }
 
   .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    width: 100%;
   }
 
-  .form-group {
+  .form-inputs {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  label {
-    font-weight: 500;
-    color: var(--text-color);
+    gap: 1rem;
   }
 
   input, textarea {
-    padding: 0.75rem;
     border: 1px solid #e2e8f0;
-    border-radius: 0.375rem;
-    font-size: 1rem;
-    transition: border-color var(--transition-speed);
+    outline: 0;
+    padding: 1em;
+    border-radius: 8px;
+    width: 100%;
+    font-family: inherit;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
   }
 
   input:focus, textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
+    border-color: var(--primary-color, #e74c3c);
+    box-shadow: 0 0 2px var(--primary-color, #e74c3c);
   }
 
-  .btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color var(--transition-speed);
+  textarea {
+    height: 150px;
+    resize: vertical;
   }
 
-  .btn.primary {
-    background: var(--primary-color);
+  #input-submit {
+    margin-top: 1rem;
     color: white;
+    background: var(--primary-color, #e74c3c);
+    cursor: pointer;
+    font-weight: 600;
+    padding: 1rem 2rem;
   }
 
-  .btn.primary:hover {
-    background: var(--secondary-color);
+  #input-submit:hover {
+    background: var(--secondary-color, #c0392b);
+    transform: translateY(-2px);
   }
 
   @media (max-width: 768px) {
