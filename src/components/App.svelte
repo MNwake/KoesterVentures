@@ -5,7 +5,6 @@
   import Services from './Services.svelte';
   import Contact from './Contact.svelte';
   import Footer from './Footer.svelte';
-  import '../../css/main.css';
 </script>
 
 <div class="app">
