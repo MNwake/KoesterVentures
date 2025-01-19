@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
             if (!sessionId) {
                 sessionId = `${Date.now()}-${crypto.randomUUID()}`;
-                document.cookie = `${cookieName}=${sessionId}; path=/; domain=.koesterventures.com; secure`;
+                // Set the cookie to be available across subdomains
+                document.cookie = `${cookieName}=${sessionId}; path=/; domain=${window.location.hostname}; secure`;
             }
             return sessionId;
         }
@@ -27,23 +28,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async sendAnalyticsEvent(endpoint, data) {
             try {
+                const payload = {
+                    ...data,
+                    session_id: this.sessionId, // Ensure session_id is included
+                    timestamp: Math.floor(Date.now() / 1000), // Add timestamp
+                };
+        
                 const response = await fetch(`${this.baseUrl}${endpoint}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Host': window.location.hostname // Include base URL in headers
                     },
-                    body: JSON.stringify({
-                        ...data,
-                        session_id: this.sessionId, // Ensure session_id is always included
-                        timestamp: Math.floor(Date.now() / 1000),
-                    }),
+                    body: JSON.stringify(payload),
                 });
-                if (!response.ok) throw new Error('Analytics request failed');
+        
+                if (!response.ok) {
+                    const errorDetails = await response.text();
+                    throw new Error(`Analytics request failed: ${errorDetails}`);
+                }
             } catch (error) {
                 console.error('Analytics error:', error);
             }
         }
+        
         
         
     
@@ -63,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     element_classes: element.className || null,
                     element_text: element.textContent.trim().slice(0, 50), // Limit text length
                     position_x: e.pageX,
-                    position_y: e.pageY
+                    position_y: e.pageY,
+                    session_id: this.sessionId // Ensure this is included
                 });
             });
         }
