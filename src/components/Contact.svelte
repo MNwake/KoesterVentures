@@ -5,16 +5,108 @@
     subject: '',
     message: ''
   };
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    console.log('Form submitted:', formData);
-    formData = {
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
+  
+  let isSubmitting = false;
+  let submitTimeout = null;
+  
+  // Email validation regex
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  
+  function validateForm() {
+    // Trim all fields before validation
+    const trimmedData = {
+      name: formData.name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      subject: formData.subject.trim(),
+      message: formData.message.trim()
     };
+    
+    // Check for empty fields
+    if (!trimmedData.name || !trimmedData.email || 
+        !trimmedData.subject || !trimmedData.message) {
+      alert('Please fill out all fields');
+      return false;
+    }
+    
+    // Validate email format
+    if (!emailRegex.test(trimmedData.email)) {
+      alert('Please enter a valid email address');
+      return false;
+    }
+    
+    // Check minimum lengths
+    if (trimmedData.name.length < 2) {
+      alert('Name must be at least 2 characters long');
+      return false;
+    }
+    
+    if (trimmedData.subject.length < 3) {
+      alert('Subject must be at least 3 characters long');
+      return false;
+    }
+    
+    if (trimmedData.message.length < 10) {
+      alert('Message must be at least 10 characters long');
+      return false;
+    }
+    
+    // Update formData with trimmed values
+    formData = trimmedData;
+    
+    return true;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmitting) {
+      return;
+    }
+    
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+    
+    isSubmitting = true;
+    
+    try {
+      const response = await fetch('/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      // Clear form after successful submission
+      formData = {
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      };
+      
+      alert('Message sent successfully!');
+      
+      // Prevent multiple submissions within 30 seconds
+      if (submitTimeout) {
+        clearTimeout(submitTimeout);
+      }
+      submitTimeout = setTimeout(() => {
+        isSubmitting = false;
+      }, 30000); // 30 second cooldown
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again later.');
+      isSubmitting = false;
+    }
   }
 </script>
 
@@ -29,7 +121,7 @@
       <div class="contact-info">
         <div class="info-item">
           <h3>Email</h3>
-          <p><a href="mailto:contact@koesterventures.com">theo@koesterventures.com</a></p>
+          <p><a href="mailto:theo@koesterventures.com">theo@koesterventures.com</a></p>
         </div>
         <div class="info-item">
           <h3>Location</h3>
@@ -51,6 +143,8 @@
             id="input-name" 
             placeholder="Name"
             bind:value={formData.name}
+            minlength="2"
+            maxlength="100"
             required
           />
           <input 
@@ -58,6 +152,8 @@
             id="input-email" 
             placeholder="Email address"
             bind:value={formData.email}
+            pattern="[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+"
+            maxlength="100"
             required
           />
           <input 
@@ -65,6 +161,8 @@
             id="input-subject" 
             placeholder="Subject"
             bind:value={formData.subject}
+            minlength="3"
+            maxlength="200"
             required
           />
           <textarea 
@@ -72,10 +170,17 @@
             id="input-message" 
             placeholder="Message"
             bind:value={formData.message}
+            minlength="10"
+            maxlength="2000"
             required
           ></textarea>
         </div>
-        <input type="submit" value="Send Message" id="input-submit">
+        <input 
+          type="submit" 
+          value={isSubmitting ? 'Sending...' : 'Send Message'} 
+          id="input-submit"
+          disabled={isSubmitting}
+        >
       </form>
     </div>
   </div>
@@ -181,9 +286,15 @@
     padding: 1rem 2rem;
   }
 
-  #input-submit:hover {
+  #input-submit:hover:not(:disabled) {
     background: var(--secondary-color, #c0392b);
     transform: translateY(-2px);
+  }
+
+  #input-submit:disabled {
+    background: var(--gray-light, #ccc);
+    cursor: not-allowed;
+    transform: none;
   }
 
   @media (max-width: 768px) {
