@@ -1,0 +1,19 @@
+# Ignore the Python file
+koester_ventures.py
+
+# Ignore the public folder
+public/
+
+# Node modules and dependencies
+node_modules/
+
+# Build output directories (if any)
+dist/
+
+# Vite cache and logs
+.vite/
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db

@@ -1,33 +1,15 @@
 <script>
-  const projects = [
-    {
-      title: "Cabl3D",
-      description: "A mobile app for cable wakeboard parks to manage their operations and engage with riders.",
-      tags: ["Mobile App", "React Native", "Python", "FastAPI"],
-      image: "/assets/cabl3d.jpg"
-    },
-    {
-      title: "CableCoin",
-      description: "A cryptocurrency platform for the cable wakeboarding industry.",
-      tags: ["Web3", "Blockchain", "Svelte", "Smart Contracts"],
-      image: "/assets/cablecoin.jpg"
-    },
-    {
-      title: "CabledWakeparks",
-      description: "An informational platform for cable wakeboard parks worldwide.",
-      tags: ["Web Development", "Svelte", "Python"],
-      image: "/assets/cabledwakeparks.jpg"
-    }
-  ];
+  import { projects } from "../../js/utils";
 </script>
 
 <section id="portfolio" class="section portfolio">
   <div class="container">
     <h2>Our Work</h2>
     <p class="section-description">
-      Check out some of our recent projects that showcase our expertise in building modern, scalable solutions.
+      Check out some of our recent projects that showcase our expertise in
+      building modern, scalable solutions.
     </p>
-    
+
     <div class="projects-grid">
       {#each projects as project}
         <div class="project-card">
@@ -45,6 +27,10 @@
           </div>
         </div>
       {/each}
+    </div>
+
+    <div class="view-all-wrapper">
+      <a href="/portfolio" class="view-all-button">View All Projects</a>
     </div>
   </div>
 </section>
@@ -64,15 +50,17 @@
   .section-description {
     text-align: center;
     max-width: 600px;
-    margin: 0 auto 3rem auto;
+    margin: 0 auto 2rem auto;
     color: var(--text-color);
     opacity: 0.8;
   }
 
   .projects-grid {
+    margin-top: 2rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    margin-bottom: 2rem;
   }
 
   .project-card {
@@ -89,14 +77,15 @@
 
   .project-image {
     width: 100%;
-    height: 200px;
+    height: 300px;
     overflow: hidden;
   }
 
   .project-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: var(white);
   }
 
   .project-content {
@@ -134,4 +123,31 @@
       grid-template-columns: 1fr;
     }
   }
-</style> 
+
+  .view-all-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  .view-all-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color var(--transition-speed);
+  }
+
+  .view-all-button:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+  }
+
+  .view-all-button:active {
+    transform: translateY(0);
+  }
+</style>

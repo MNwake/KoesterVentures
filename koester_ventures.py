@@ -2,15 +2,28 @@ import logging
 from pathlib import Path
 
 from fastapi import HTTPException
+from fastapi.responses import RedirectResponse
+from starlette.requests import Request
 from starlette.responses import FileResponse
 
 from config.config import Config
 from database import ServerMemory
 from database.websites.email_contact import ContactRequest
+from utility.ai_agent import AIAgent
 from utility.email_manager import EmailManager
 from webserver.routes import RiderRoutes, ParkRoutes, StatsRoute, ContestRoutes, ScorecardRoutes
 from webserver.routes.analytics_route import AnalyticsRoutes
 from webserver.website_base import Website
+
+# Path to the instructions text file.
+ASSISTANT_INSTRUCTIONS_FILE = "config/koester_assistant_instructions.txt"
+assistant = Config.OpenAI.KOESTER_VENTURES_ASSISTANT
+
+
+# Load assistant instructions from text file.
+def load_assistant_instructions(filepath: str) -> str:
+    with open(filepath, "r", encoding="utf-8") as f:
+        return f.read().strip()
 
 
 class KoesterVentures(Website):
@@ -39,6 +52,19 @@ class KoesterVentures(Website):
         self.contest_route = ContestRoutes(memory=self.memory)
         self.scorecard_route = ScorecardRoutes(memory=self.memory)
         self.analytics_route = AnalyticsRoutes()
+
+        # Load the assistant instructions from the text file.
+        assistant_instructions = load_assistant_instructions(ASSISTANT_INSTRUCTIONS_FILE)
+
+        # Initialize the AI Agent for chat using instructions from the file.
+        self.ai_agent: AIAgent = AIAgent(
+            name="Koester Ventures Assistant",
+            instructions=assistant_instructions,
+            model="gpt-4o-mini",
+            tools=[],  # Add any tools if needed.
+            assistant_id=assistant
+        )
+
         self.setup_specific_routes()
         self.setup_routes()
 
@@ -64,6 +90,7 @@ class KoesterVentures(Website):
             return FileResponse(f"{self.src_dir}/images/favicon.ico")
 
             # FastAPI endpoint to handle "Contact Us" form submissions
+
         @self.app.post("/contact")
         async def contact_us(request: ContactRequest):
             """
@@ -104,6 +131,22 @@ class KoesterVentures(Website):
                 logging.error(f"Error in contact_us: {e}")
                 raise HTTPException(status_code=500, detail="Failed to send emails")
 
+        @self.app.get("/privacy_policy")
+        async def privacy_policy_redirect():
+            return RedirectResponse(url="/privacy_policy.html")
+
+        @self.app.post("/api/chat")
+        async def chat_endpoint(request: Request):
+            payload = await request.json()
+            user_message = payload.get("message")
+            if not user_message:
+                raise HTTPException(status_code=400, detail="No message provided.")
+
+            client_ip = request.client.host
+            self.ai_agent.add_message_to_thread(client_ip, "user", user_message)
+            assistant_reply = self.ai_agent.run_assistant(client_ip)
+            return {"response": assistant_reply}
+
         # Catch-all route for static files
         @self.app.get("/{path:path}")
         async def catch_all(path: str):
@@ -111,8 +154,3 @@ class KoesterVentures(Website):
             if file_path.is_file():
                 return FileResponse(str(file_path))
             raise HTTPException(status_code=404, detail="File not found")
-
-        @self.app.get("/privacy_policy")
-        async def privacy_policy():
-            return FileResponse(f"{self.src_dir}/privacy_policy.html")
-

@@ -1,25 +1,49 @@
 <script>
+  import { Link } from "svelte-routing";
+  import ChatWidget from "./ChatWidget.svelte";
   let isMenuOpen = false;
-  
+  let isMobile = false;
+
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
   }
+
+  // Check if we're on mobile
+  function checkMobile() {
+    isMobile = window.innerWidth <= 768;
+  }
+
+  // Add resize listener
+  import { onMount } from "svelte";
+  onMount(() => {
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  });
 </script>
 
 <nav class="nav">
   <div class="container nav-container">
-    <a href="/" class="logo">Koester Ventures</a>
-    
+    <Link to="/" let:href>
+      <a {href} class="logo">Koester Ventures</a>
+    </Link>
+
     <button class="menu-toggle" on:click={toggleMenu}>
       <span class="sr-only">Menu</span>
       <div class="hamburger" class:open={isMenuOpen}></div>
     </button>
-    
+
     <ul class="nav-links" class:open={isMenuOpen}>
+      <!-- <li><Link to="#portfolio">Portfolio</Link></li> -->
       <li><a href="#portfolio">Portfolio</a></li>
       <li><a href="#services">Services</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact" class="cta-button">Get in Touch</a></li>
+      {#if isMobile}
+        <li class="mobile-chat">
+          <ChatWidget />
+        </li>
+      {/if}
     </ul>
   </div>
 </nav>
@@ -99,6 +123,7 @@
       background: none;
       border: none;
       padding: 0.5rem;
+      z-index: 1001;
     }
 
     .nav-links {
@@ -106,22 +131,72 @@
       top: 4rem;
       left: 0;
       right: 0;
+      bottom: 0; /* Make menu full height */
       background: var(--background-color);
       flex-direction: column;
       padding: 1rem;
       gap: 1rem;
-      transform: translateY(-100%);
+      transform: translateX(100%); /* Slide from right instead of top */
       transition: transform var(--transition-speed);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
     }
 
     .nav-links.open {
-      transform: translateY(0);
+      transform: translateX(0);
+    }
+
+    .mobile-chat {
+      margin-top: auto; /* Push chat to bottom of menu */
+      padding-top: 1rem;
+      border-top: 1px solid var(--gray-light);
+    }
+
+    /* Override ChatWidget styles for mobile */
+    :global(.mobile-chat .chat-widget) {
+      position: static;
+      width: 100%;
+    }
+
+    :global(.mobile-chat .chat-window) {
+      position: fixed;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: calc(100vh - 4rem); /* Adjust height to account for nav */
+      border-radius: 0;
+      z-index: 1002; /* Ensure it's above the mobile menu */
+    }
+
+    :global(.mobile-chat .chat-button) {
+      width: 100%;
+      border-radius: 0.375rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    :global(.mobile-chat .chat-button .message-icon) {
+      margin-right: 0.5rem;
+    }
+
+    :global(.mobile-chat) {
+      width: 100%;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--gray-light);
+    }
+
+    .nav-links {
+      z-index: 1001; /* Ensure proper layering */
     }
 
     .hamburger::before,
     .hamburger::after {
-      content: '';
+      content: "";
       position: absolute;
       width: 100%;
       height: 2px;
@@ -151,4 +226,4 @@
       bottom: 0;
     }
   }
-</style> 
+</style>

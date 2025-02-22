@@ -1,57 +1,13 @@
 <script>
-  const services = [
-    {
-      title: "Web Development",
-      description: "Custom websites and web applications built with modern technologies and best practices.",
-      icon: "🌐",
-      features: [
-        "Responsive Design",
-        "Progressive Web Apps",
-        "E-commerce Solutions",
-        "Content Management Systems"
-      ]
-    },
-    {
-      title: "Mobile Development",
-      description: "Native and cross-platform mobile applications for iOS and Android.",
-      icon: "📱",
-      features: [
-        "React Native Apps",
-        "Native iOS/Android",
-        "App Store Deployment",
-        "Mobile UI/UX Design"
-      ]
-    },
-    {
-      title: "Backend Development",
-      description: "Scalable and secure server-side solutions for your applications.",
-      icon: "⚙️",
-      features: [
-        "API Development",
-        "Database Design",
-        "Cloud Infrastructure",
-        "System Architecture"
-      ]
-    },
-    {
-      title: "Web3 Solutions",
-      description: "Blockchain and cryptocurrency integration for modern applications.",
-      icon: "🔗",
-      features: [
-        "Smart Contracts",
-        "DApp Development",
-        "Token Integration",
-        "Blockchain Consulting"
-      ]
-    }
-  ];
+  import { services } from "../../js/utils";
 </script>
 
 <section id="services" class="section services">
   <div class="container">
     <h2>Our Services</h2>
     <p class="section-description">
-      We offer comprehensive software development services to help businesses thrive in the digital age.
+      We offer comprehensive software development services to help businesses
+      thrive in the digital age.
     </p>
 
     <div class="services-grid">
@@ -151,4 +107,10 @@
       grid-template-columns: 1fr;
     }
   }
-</style> 
+
+  :global(.section.services) {
+    overflow: hidden;
+  }
+
+
+</style>
