@@ -2,18 +2,6 @@
 
 Koester Ventures is a modern, responsive frontend project built with Svelte and powered by a custom Python backend. This project serves as both a portfolio showcase and a demonstration of clean, modular code architecture.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Installation & Setup](#installation--setup)
-- [Usage](#usage)
-- [Technologies](#technologies)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Overview
 
 Koester Ventures is designed to highlight a range of frontend components and integrations, including dynamic content areas, interactive chat widgets, and custom navigation elements. The project showcases the use of Svelte components along with a lightweight Python server to deliver a seamless user experience.
